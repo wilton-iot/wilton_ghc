@@ -73,7 +73,7 @@ support::buffer init(sl::io::span<const char> data) {
         } else if ("shimLibDirectory" == name) {
             dir = fi.as_string_nonempty_or_throw(name);
         } else if ("initArgs" == name) {
-            options = sl::ranges::transform(fi.as_array_or_throw(name), [&name](const sl::json::value& en) {
+            options = sl::ranges::transform(fi.as_array_or_throw(name), [&name](const sl::json::value& en) -> std::string {
                 return en.as_string_nonempty_or_throw(name);
             }).to_vector();
         } else {
