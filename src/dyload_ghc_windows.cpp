@@ -57,7 +57,7 @@ void* load_library(const std::string& path) {
 }
 
 void* find_symbol(void* lib, const std::string& name) {
-    auto sym = ::GetProcAddress(handle, name.c_str());
+    auto sym = ::GetProcAddress(lib, name.c_str());
     if (nullptr == sym) {
         throw support::exception(TRACEMSG(
                 "Error loading symbol: [" + name + "], " +
