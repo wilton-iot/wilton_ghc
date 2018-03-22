@@ -40,6 +40,7 @@ typedef void(*wilton_ghcshim_hs_exit_type)();
 
 typedef void(*wilton_ghcshim_hs_thread_done_type)();
 
+// initialized from wilton_ghc_init
 void* shimlib(const std::string& path = "") {
     static void* lib = [&path]{
         return wilton::ghc::load_library(path);

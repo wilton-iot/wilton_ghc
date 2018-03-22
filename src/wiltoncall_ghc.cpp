@@ -22,6 +22,8 @@
  */
 
 #include <functional>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -41,6 +43,12 @@ namespace wilton {
 namespace ghc {
 
 namespace { // anonymous
+
+// initialized from wilton_module_init
+std::shared_ptr<std::mutex> shared_mutex() {
+    static auto mutex = std::make_shared<std::mutex>();
+    return mutex;
+}
 
 std::string default_lib_dir() {
     auto exepath = sl::utils::current_executable_path();
@@ -89,6 +97,8 @@ support::buffer init(sl::io::span<const char> data) {
     auto args = sl::ranges::transform(options, [](const std::string& ar) {
         return ar.c_str();
     }).to_vector();
+    // take lock
+    std::lock_guard<std::mutex> guard{*shared_mutex()};
     // call wilton
     char* err = wilton_ghc_init(path.c_str(), static_cast<int>(path.length()),
             static_cast<int>(args.size()), args.data());
@@ -99,6 +109,8 @@ support::buffer init(sl::io::span<const char> data) {
 }
 
 support::buffer shutdown(sl::io::span<const char>) {
+    // take lock
+    std::lock_guard<std::mutex> guard{*shared_mutex()};
     // call wilton
     char* err = wilton_ghc_shutdown();
     if (nullptr != err) {
@@ -108,6 +120,8 @@ support::buffer shutdown(sl::io::span<const char>) {
 }
 
 support::buffer thread_done(sl::io::span<const char>) {
+    // take lock, just in case
+    std::lock_guard<std::mutex> guard{*shared_mutex()};
     // call wilton
     char* err = wilton_ghc_thread_done();
     if (nullptr != err) {
@@ -121,6 +135,7 @@ support::buffer thread_done(sl::io::span<const char>) {
 
 extern "C" char* wilton_module_init() {
     try {
+        wilton::ghc::shared_mutex();
         wilton::support::register_wiltoncall("ghc_init", wilton::ghc::init);
         wilton::support::register_wiltoncall("ghc_shutdown", wilton::ghc::shutdown);
         wilton::support::register_wiltoncall("ghc_thread_done", wilton::ghc::thread_done);
