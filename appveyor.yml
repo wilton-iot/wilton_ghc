@@ -36,10 +36,10 @@ build_script:
   - echo "Updading modules to master"
   - resources\ci\master-modules.bat
   - echo "Replacing repo to test PR"
-  - rd /s /q modules\wilton_fs
-  - if exist modules\wilton_fs exit /b 1
-  - robocopy ..\wilton_fs modules\wilton_fs /e /mov /nfl /ndl /njh /njs /nc /ns /np || true
-  - cd modules\wilton_fs
+  - rd /s /q modules\wilton_ghc
+  - if exist modules\wilton_ghc exit /b 1
+  - robocopy ..\wilton_ghc modules\wilton_ghc /e /mov /nfl /ndl /njh /njs /nc /ns /np || true
+  - cd modules\wilton_ghc
   - git rev-parse HEAD
   - cd ..\..
   - cmd /c resources\ci\appveyor%WILTON_WIN_ARCH%bat
