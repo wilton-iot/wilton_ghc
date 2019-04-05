@@ -23,19 +23,7 @@
 
 #include "dyload_ghc.hpp"
 
-#ifndef UNICODE
-#define UNICODE
-#endif // UNICODE
-#ifndef _UNICODE
-#define _UNICODE
-#endif // _UNICODE
-#ifndef NOMINMAX
-#define NOMINMAX
-#endif NOMINMAX
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif // WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include "staticlib/support/windows.hpp"
 
 #include "staticlib/support.hpp"
 #include "staticlib/utils.hpp"
